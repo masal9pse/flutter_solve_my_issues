@@ -14,6 +14,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class Counter {
+  int _counter = 0;
+  final StreamController<int> _controller = StreamController<int>();
+  Stream<int> get stream => _controller.stream;
+
+  void increment() {
+    _counter++;
+    _controller.add(_counter);
+  }
+}
+
 class CounterPage extends StatefulWidget {
   @override
   _CounterPageState createState() => _CounterPageState();
@@ -22,11 +33,18 @@ class CounterPage extends StatefulWidget {
 class _CounterPageState extends State<CounterPage> {
   late final StreamSubscription<String> _subscription;
   String _currentWord = 'Hello';
+  int count = 0;
+  final counter = Counter();
 
   @override
   void initState() {
     super.initState();
     _startTimer();
+    counter.stream.listen((data) {
+      setState(() {
+        count = data;
+      });
+    });
   }
 
   Stream<String> getTechWord() async* {
@@ -37,8 +55,8 @@ class _CounterPageState extends State<CounterPage> {
     yield 'flutter';
     await Future.delayed(const Duration(seconds: 1));
     yield 'stream';
-    await Future.delayed(const Duration(seconds: 1));
-    throw Exception('error'); 
+    await Future.delayed(const Duration(seconds: 1));    
+    // throw Exception('error'); 
   }
 
   void _startTimer() {
@@ -76,11 +94,17 @@ class _CounterPageState extends State<CounterPage> {
           ),
         ],
       ),
-      body: Center(
-        child: Text(
-          _currentWord,
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-        ),
+      body: Column(
+        children: [
+          Center(
+            child: Text(
+              _currentWord,
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Text('$count'),
+          ElevatedButton.icon(onPressed: counter.increment, label: Icon(Icons.plus_one))
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _subscription.resume(),
