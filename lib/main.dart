@@ -29,12 +29,18 @@ class _CounterPageState extends State<CounterPage> {
     _startTimer();
   }
 
-  void _startTimer() {
-    final words = ['Hello', 'World', 'Flutter', 'Stream'];
-    _subscription = Stream.periodic(
+  Stream<String> getTechWord() async* {
+    final words = ['Hello', 'World', 'Flutter', 'Stream'];        
+    yield* Stream.periodic(
       Duration(seconds: 1),
-      (count) => words[count % words.length],
-    ).listen((word) {
+      (count) {
+        return words[count % words.length];
+      },
+    );
+  }
+
+  void _startTimer() {
+    _subscription = getTechWord().listen((word) {
       setState(() {
         _currentWord = word;
       });
