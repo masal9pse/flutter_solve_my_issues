@@ -30,21 +30,31 @@ class _CounterPageState extends State<CounterPage> {
   }
 
   Stream<String> getTechWord() async* {
-    final words = ['Hello', 'World', 'Flutter', 'Stream'];        
-    yield* Stream.periodic(
-      Duration(seconds: 1),
-      (count) {
-        return words[count % words.length];
-      },
-    );
+    yield 'hello';
+    await Future.delayed(const Duration(seconds: 1));
+    yield 'world';
+    await Future.delayed(const Duration(seconds: 1));
+    yield 'flutter';
+    await Future.delayed(const Duration(seconds: 1));
+    yield 'stream';
+    await Future.delayed(const Duration(seconds: 1));
+    throw Exception('error'); 
   }
 
   void _startTimer() {
-    _subscription = getTechWord().listen((word) {
-      setState(() {
-        _currentWord = word;
-      });
-    });
+    _subscription = getTechWord().listen(
+      (word) {
+        setState(() {
+          _currentWord = word;
+        });
+      },
+      onError: (err) {
+        print('error');
+      },
+      onDone: () {
+        print('done');
+      },
+    );
   }
 
   @override
