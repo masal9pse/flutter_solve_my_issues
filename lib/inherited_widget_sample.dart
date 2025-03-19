@@ -1,88 +1,94 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_engineer_codecheck/sheet_sample.dart';
 
 void main() {
-  runApp(MyWidget());
+  runApp(MyApp());
 }
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Page1(),
-    );
-  }
-}
-
-class Page1 extends StatefulWidget {
-  const Page1({super.key});
-
-  @override
-  State<Page1> createState() => _Page1State();
-}
-
-class _Page1State extends State<Page1> {
-  void increment() {
-    setState(() {
-      _count++;
-    });
-  }
-
-  int _count = 0;
-  @override
-  Widget build(BuildContext context) {
-    return InheritedCount(
-      count: _count,
-      child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => increment(),
-          child: Icon(Icons.plus_one),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            WidgetA(),
-            WidgetB(),
-          ],
-        ),
+    return MaterialApp(
+      title: 'InheritedWidget Example',
+      home: Scaffold(
+        appBar: AppBar(title: Text('InheritedWidget Example')),
+        body: MyStatefulWidget(),
       ),
     );
   }
 }
 
-class InheritedCount extends InheritedWidget {
-  const InheritedCount({super.key, required super.child, required this.count});
-  final int count;
+class MyModel extends InheritedWidget {
+  final int counter;
+  final String message;
 
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return true;
+  const MyModel({
+    Key? key,
+    required Widget child,
+    required this.counter,
+    required this.message,
+  }) : super(key: key, child: child);
+
+  static MyModel? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<MyModel>();
   }
 
-  static InheritedCount? of(BuildContext context, {required bool listen}) {
-    return listen
-        ? context.dependOnInheritedWidgetOfExactType<InheritedCount>()
-        : context.getElementForInheritedWidgetOfExactType<InheritedCount>()!.widget as InheritedCount;
-  }
-}
-
-class WidgetA extends StatelessWidget {
-  const WidgetA({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    /// MediaQueryと一緒やな
-    return Text('Widget A ${InheritedCount.of(context, listen: true)!.count}');
+  bool updateShouldNotify(MyModel oldWidget) {
+    return counter != oldWidget.counter || message != oldWidget.message;
   }
 }
 
-class WidgetB extends StatelessWidget {
-  const WidgetB({super.key});
+class MyStatefulWidget extends StatefulWidget {
+  @override
+  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+  int counter = 0;
+  String message = "Hello";
+
+  void increment() {
+    setState(() {
+      counter++;
+    });
+  }
+
+  void updateMessage() {
+    setState(() {
+      message = "Updated Message!";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Text('Widget B ${InheritedCount.of(context, listen: false)!.count}');
+    return MyModel(
+      counter: counter,
+      message: message,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CounterDisplay(),
+          MessageDisplay(),
+          ElevatedButton(onPressed: increment, child: Text("Increment Counter")),
+          ElevatedButton(onPressed: updateMessage, child: Text("Update Message"))
+        ],
+      ),
+    );
+  }
+}
+
+class CounterDisplay extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final model = MyModel.of(context);
+    return Text('Counter: ${model?.counter}');
+  }
+}
+
+class MessageDisplay extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final model = MyModel.of(context);
+    return Text('Message: ${model?.message}');
   }
 }
