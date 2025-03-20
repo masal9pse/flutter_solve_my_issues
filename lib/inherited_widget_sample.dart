@@ -43,8 +43,12 @@ class MyModel extends InheritedWidget {
     required this.data,
   });
 
-  static MyModel? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<MyModel>();
+  static MyModel? of(BuildContext context,{bool rebuild = true}) {
+    if (rebuild) {
+      return context.getElementForInheritedWidgetOfExactType<MyModel>()!.widget as MyModel;
+    // return context.dependOnInheritedWidgetOfExactType<MyModel>();
+    }
+    return context.getElementForInheritedWidgetOfExactType<MyModel>() as MyModel;
     // return context.dependOnInheritedWidgetOfExactType<InheritedWidget>();
   }
 
