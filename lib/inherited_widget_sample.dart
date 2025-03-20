@@ -30,6 +30,7 @@ class MyModel extends InheritedWidget {
 
   static MyModel? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<MyModel>();
+    // return context.dependOnInheritedWidgetOfExactType<InheritedWidget>();
   }
 
   @override
@@ -80,6 +81,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 class CounterDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // final c = MediaQuery;
     final model = MyModel.of(context);
     return Text('Counter: ${model?.counter}');
   }
