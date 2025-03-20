@@ -30,19 +30,17 @@ class MyModel extends InheritedModel<String> {
   }) : super(key: key, child: child);
 
   static MyModel? of(BuildContext context, String aspect) {
-    // MediaQuery
     return InheritedModel.inheritFrom<MyModel>(context, aspect: aspect);
   }
 
-  // ✅ `updateShouldNotify` を追加
   @override
   bool updateShouldNotify(MyModel oldWidget) {
     return counter != oldWidget.counter || message != oldWidget.message;
   }
 
+  // updateShouldNotifyDependentメソッドを使用して、どのaspectが変わったかを確認
   @override
-  bool updateShouldNotifyDependent(
-      MyModel oldWidget, Set<String> dependencies) {
+  bool updateShouldNotifyDependent(MyModel oldWidget, Set<String> dependencies) {
     if (dependencies.contains('counter') && counter != oldWidget.counter) {
       return true;
     }
@@ -84,32 +82,28 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         children: [
           CounterDisplay(),
           MessageDisplay(),
-          ElevatedButton(
-              onPressed: increment, child: Text("Increment Counter123")),
-          ElevatedButton(
-              onPressed: updateMessage, child: Text("Update Message"))
+          ElevatedButton(onPressed: increment, child: Text("Increment Counter")),
+          ElevatedButton(onPressed: updateMessage, child: Text("Update Message"))
         ],
       ),
     );
   }
 }
 
-// カウンターの値のみを監視
 class CounterDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("CounterDisplay rebuilt");  // デバッグ用
-    final model = MyModel.of(context, 'counter'); // 'counter' の変更のみ監視
+    print("CounterDisplay rebuilt");
+    final model = MyModel.of(context, 'counter'); // 'counter' のみ変更監視
     return Text('Counter: ${model?.counter}');
   }
 }
 
-// メッセージの値のみを監視
 class MessageDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("MessageDisplay rebuilt");  // デバッグ用
-    final model = MyModel.of(context, 'message'); // 'message' の変更のみ監視
+    print("MessageDisplay rebuilt");
+    final model = MyModel.of(context, 'message'); // 'message' のみ変更監視
     return Text('Message: ${model?.message}');
   }
 }

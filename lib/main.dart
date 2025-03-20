@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:sheet/route.dart';
 
 void main() {
   runApp(MyApp());
@@ -47,6 +50,27 @@ class _CounterPageState extends State<CounterPage> {
     });
   }
 
+  StreamController<String> getTechWordController() {
+    final controller = StreamController<String>();
+    final word = ['naruto', 'sasuke', 'rufi', 'masato'];
+    Stream.periodic(Duration(seconds: 1), (time) {
+      // controller.add(word[time % word.length]);
+      return word[time % word.length];
+    }).listen((event) {
+      controller.add(event);
+    });
+    // Future(() async {
+    //   controller.add('hello');
+    //   await Future.delayed(const Duration(seconds: 1));
+    //   controller.add('world');
+    //   await Future.delayed(const Duration(seconds: 1));
+    //   controller.add('flutter');
+    //   await Future.delayed(const Duration(seconds: 1));
+    //   controller.add('stream');
+    // });
+    return controller;
+  }
+
   Stream<String> getTechWord() async* {
     yield 'hello';
     await Future.delayed(const Duration(seconds: 1));
@@ -55,12 +79,12 @@ class _CounterPageState extends State<CounterPage> {
     yield 'flutter';
     await Future.delayed(const Duration(seconds: 1));
     yield 'stream';
-    await Future.delayed(const Duration(seconds: 1));    
-    // throw Exception('error'); 
+    await Future.delayed(const Duration(seconds: 1));
+    // throw Exception('error');
   }
 
   void _startTimer() {
-    _subscription = getTechWord().listen(
+    _subscription = getTechWordController().stream.listen(
       (word) {
         setState(() {
           _currentWord = word;
@@ -103,13 +127,51 @@ class _CounterPageState extends State<CounterPage> {
             ),
           ),
           Text('$count'),
-          ElevatedButton.icon(onPressed: counter.increment, label: Icon(Icons.plus_one))
+          // ElevatedButton.icon(
+          //     onPressed: counter.increment, label: Icon(Icons.plus_one))
+          ElevatedButton.icon(
+              onPressed: () {
+                // showCupertinoModalBottomSheet(
+                //     context: context,
+                //     expand: true,
+                //     builder: (context) {
+                //       return MyWidget();
+                //     });
+                // showShee
+                Navigator.of(context).push(SheetRoute(
+                  initialExtent: 0.8,
+                  
+                  builder: (context) {
+                    return MyWidget();
+                  },
+                ));
+                // SheetRoute(
+                //   builder: (context) {
+                //     return MyWidget();
+                //   },
+                //   initialExtent: 200
+                // );
+              },
+              label: Icon(Icons.plus_one)),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _subscription.resume(),
         child: Icon(Icons.play_arrow),
         tooltip: 'Resume Stream',
+      ),
+    );
+  }
+}
+
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('masato'),
       ),
     );
   }
