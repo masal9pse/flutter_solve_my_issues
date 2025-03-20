@@ -52,6 +52,7 @@ class HomePage extends StatefulWidget {
   }) : super(key: key);
 
   final Widget child;
+  int t = 3;
 
   @override
   HomePageState createState() => HomePageState();
@@ -109,7 +110,6 @@ class WidgetC extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomePageState state = HomePage.of(context, rebuild: false);
-    state.
     return ElevatedButton(
       onPressed: () {
         state._incrementCounter();

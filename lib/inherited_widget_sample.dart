@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_engineer_codecheck/main.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,7 +12,19 @@ class MyApp extends StatelessWidget {
       title: 'InheritedWidget Example',
       home: Scaffold(
         appBar: AppBar(title: Text('InheritedWidget Example')),
-        body: MyStatefulWidget(),
+        body: MyStatefulWidget(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CounterDisplay(),
+              MessageDisplay(),
+              CounterButton(),
+              // ElevatedButton(onPressed: widget., child: Text("Increment Counter")),
+              // ElevatedButton(
+              //     onPressed: updateMessage, child: Text("Update Message"))
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -20,14 +33,14 @@ class MyApp extends StatelessWidget {
 class MyModel extends InheritedWidget {
   final int counter;
   final String message;
-  final MyStatefulWidget data;
+  final _MyStatefulWidgetState data;
 
   const MyModel({
     super.key,
     required super.child,
     required this.counter,
     required this.message,
-    required this.data, 
+    required this.data,
   });
 
   static MyModel? of(BuildContext context) {
@@ -42,6 +55,10 @@ class MyModel extends InheritedWidget {
 }
 
 class MyStatefulWidget extends StatefulWidget {
+  const MyStatefulWidget({super.key, required this.child});
+
+  final Widget child;
+
   @override
   _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
 }
@@ -67,16 +84,19 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return MyModel(
       counter: counter,
       message: message,
-      data: widget,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CounterDisplay(),
-          MessageDisplay(),
-          ElevatedButton(onPressed: widget., child: Text("Increment Counter")),
-          ElevatedButton(onPressed: updateMessage, child: Text("Update Message"))
-        ],
-      ),
+      data: this,
+      child: widget.child,
+      // child: Column(
+      //   mainAxisAlignment: MainAxisAlignment.center,
+      //   children: [
+      //     CounterDisplay(),
+      //     MessageDisplay(),
+      //     CounterButton(),
+      //     // ElevatedButton(onPressed: widget., child: Text("Increment Counter")),
+      //     ElevatedButton(
+      //         onPressed: updateMessage, child: Text("Update Message"))
+      //   ],
+      // ),
     );
   }
 }
@@ -88,9 +108,11 @@ class CounterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     // MyStatefulWidgetではなく、_MyStatefulWidgetStateを取得できるようにしたい！！
     final state = MyModel.of(context)!.data;
-    return ElevatedButton(onPressed: () {
-
-    }, child: Text('Increment Counter'));
+    return ElevatedButton(
+        onPressed: () {
+          state.increment();
+        },
+        child: Text('Increment Counter'));
   }
 }
 
