@@ -11,56 +11,90 @@ class TopPage extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Demo'),
+      home: HomePage(
+        // key: null,
+        // key: null,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('InheritedWidget Demo'),
+          ),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              WidgetA(),
+              WidgetB(),
+              WidgetC(),
+            ],
+          ),
         ),
-        body: HomePage(),
       ),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class _MyInheritedWidget extends InheritedWidget {
+  _MyInheritedWidget({
+     Key? key,
+    required Widget child,
+    required this.data,
+  }) : super(key: key, child: child);
+
+  final HomePageState data;
+
   @override
-  _HomePageState createState() => _HomePageState();
+  bool updateShouldNotify(_MyInheritedWidget oldWidget) {
+    return true;
+  }
 }
 
-class _HomePageState extends State<HomePage> {
-  int _counter = 0;
+class HomePage extends StatefulWidget {
+  HomePage({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+
+  final Widget child;
+
+  @override
+  HomePageState createState() => HomePageState();
+
+  static HomePageState of(BuildContext context, {bool rebuild = true}) {
+    if (rebuild) {
+      return (context.dependOnInheritedWidgetOfExactType<_MyInheritedWidget>() as _MyInheritedWidget).data;
+    }
+    return (context.findAncestorWidgetOfExactType<_MyInheritedWidget>() as _MyInheritedWidget).data;
+    // 実は下を使うの方が良い
+    // return (context.ancestorInheritedElementForWidgetOfExactType(_MyInheritedWidget).widget as _MyInheritedWidget).data;
+  }
+}
+
+class HomePageState extends State<HomePage> {
+  int counter = 0;
 
   void _incrementCounter() {
     setState(() {
-      _counter++;
+      counter++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          WidgetA(_counter),
-          WidgetB(),
-          WidgetC(_incrementCounter),
-        ],
-      ),
+    return _MyInheritedWidget(
+      data: this,
+      child: widget.child,
     );
   }
 }
 
 class WidgetA extends StatelessWidget {
-  final int counter;
-
-  WidgetA(this.counter);
-
   @override
   Widget build(BuildContext context) {
+    final HomePageState state = HomePage.of(context);
+
     return Center(
       child: Text(
-        '${counter}',
-        // style: Theme.of(context).textTheme.headline4,
+        '${state.counter}',
+        // style: Theme.of(context).textTheme.display1,
       ),
     );
   }
@@ -74,15 +108,12 @@ class WidgetB extends StatelessWidget {
 }
 
 class WidgetC extends StatelessWidget {
-  final void Function() incrementCounter;
-
-  WidgetC(this.incrementCounter);
-
   @override
   Widget build(BuildContext context) {
+    final HomePageState state = HomePage.of(context, rebuild: false);
     return ElevatedButton(
       onPressed: () {
-        incrementCounter();
+        state._incrementCounter();
       },
       child: Icon(Icons.add),
     );
