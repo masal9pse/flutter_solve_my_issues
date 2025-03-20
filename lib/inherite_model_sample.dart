@@ -35,7 +35,8 @@ class MyModel extends InheritedModel<String> {
 
   @override
   bool updateShouldNotify(MyModel oldWidget) {
-    return counter != oldWidget.counter || message != oldWidget.message;
+    // return counter != oldWidget.counter || message != oldWidget.message;
+    return true;
   }
 
   // updateShouldNotifyDependentメソッドを使用して、どのaspectが変わったかを確認
@@ -87,6 +88,15 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         ],
       ),
     );
+  }
+}
+
+class CounterButton extends StatelessWidget {
+  const CounterButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
 

@@ -20,13 +20,15 @@ class MyApp extends StatelessWidget {
 class MyModel extends InheritedWidget {
   final int counter;
   final String message;
+  final MyStatefulWidget data;
 
   const MyModel({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
     required this.counter,
     required this.message,
-  }) : super(key: key, child: child);
+    required this.data, 
+  });
 
   static MyModel? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<MyModel>();
@@ -65,16 +67,30 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return MyModel(
       counter: counter,
       message: message,
+      data: widget,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CounterDisplay(),
           MessageDisplay(),
-          ElevatedButton(onPressed: increment, child: Text("Increment Counter")),
+          ElevatedButton(onPressed: widget., child: Text("Increment Counter")),
           ElevatedButton(onPressed: updateMessage, child: Text("Update Message"))
         ],
       ),
     );
+  }
+}
+
+class CounterButton extends StatelessWidget {
+  const CounterButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // MyStatefulWidgetではなく、_MyStatefulWidgetStateを取得できるようにしたい！！
+    final state = MyModel.of(context)!.data;
+    return ElevatedButton(onPressed: () {
+
+    }, child: Text('Increment Counter'));
   }
 }
 
