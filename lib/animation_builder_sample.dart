@@ -32,7 +32,8 @@ class _SamplePageState extends State<SamplePage>
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller = AnimationController(vsync: this,duration: const Duration(milliseconds: 300));
+    controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
     tween = Tween(begin: Alignment.topLeft, end: Alignment.topRight);
     // tween = Tween(begin: Alignment.topLeft, end: Alignment(, y));
     animation = controller.drive(tween);
@@ -48,10 +49,18 @@ class _SamplePageState extends State<SamplePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () {
+            controller.animateBack(0.5);
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 100),
         child: AnimatedBuilder(
-          animation: animation,
+          // animation: animation,
+          animation: controller,
           builder: (context, _) {
             return Align(
               alignment: animation.value,
@@ -64,6 +73,7 @@ class _SamplePageState extends State<SamplePage>
         onPressed: () {
           // MaterialPageRoute
           controller.forward();
+          // controller.animateBack(0.5);
         },
         child: Text('exec animation'),
       ),
