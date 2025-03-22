@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +32,8 @@ class _SamplePageState extends State<SamplePage>
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller = AnimationController(vsync: this,duration: const Duration(milliseconds: 300));
+    controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
     tween = Tween(begin: Alignment.topLeft, end: Alignment.topRight);
     // tween = Tween(begin: Alignment.topLeft, end: Alignment(, y));
     animation = controller.drive(tween);
@@ -51,22 +51,29 @@ class _SamplePageState extends State<SamplePage>
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(top: 100),
-        child: AnimatedBuilder(
-          animation: animation,
-          builder: (context, _) {
-            return Align(
-              alignment: animation.value,
-              child: Text('abc'),
-            );
-          },
+        child: CustomAnimatedWidget(
+          listenable: animation,
         ),
       ),
       floatingActionButton: ElevatedButton(
         onPressed: () {
+          // MaterialPageRoute
           controller.forward();
         },
         child: Text('exec animation'),
       ),
+    );
+  }
+}
+
+class CustomAnimatedWidget extends AnimatedWidget {
+  const CustomAnimatedWidget({super.key, required super.listenable});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: (listenable as Animation<Alignment>).value,
+      child: Text('abc'),
     );
   }
 }
