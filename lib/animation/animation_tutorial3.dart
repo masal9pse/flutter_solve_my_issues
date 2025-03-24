@@ -43,7 +43,7 @@ class _MyWidgetState extends State<MyWidget>
     controller = AnimationController(
         vsync: this, duration: Duration(milliseconds: 4000));
     alignTween = Tween(begin: Alignment.topCenter, end: Alignment.bottomCenter);
-    rotateTween = Tween(begin: 0, end: 3.141592);
+    rotateTween = Tween(begin: 0, end: pi * 8);
     opacityTween = Tween(begin: 1, end: 0);
     alignAnimation =
         CurvedAnimation(parent: controller, curve: Interval(0, 0.5))
