@@ -61,16 +61,17 @@ class _MyWidgetState extends State<MyWidget>
         leading: BackButton(
           onPressed: () => controller.animateBack(0),
         ),
-      ),
-      body: AnimatedBuilder(
-        animation: controller,
-        builder: (context, _) {
-          return Align(
-            alignment: animation.value,
-            child: Text('数字は${countAnimation.value}'),
-          );
-        },
-      ),
+      ),      
+      // body: AnimatedAlign(alignment: alignment, duration: duration),
+      // body: AnimatedBuilder(
+      //   animation: controller,
+      //   builder: (context, _) {
+      //     return Align(
+      //       alignment: animation.value,
+      //       child: Text('数字は${countAnimation.value}'),
+      //     );
+      //   },
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (controller.isCompleted) {
