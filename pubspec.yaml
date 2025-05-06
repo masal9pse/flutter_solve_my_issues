@@ -18,7 +18,7 @@ dependencies:
   json_annotation: ^4.8.1
   dio: ^5.7.0
   retrofit: ^4.4.2
-  auto_route: ^9.2.2
+  auto_route: ">=9.2.2 <11.0.0"
   app_links: ^6.3.3
   provider: ^6.1.2
   modal_bottom_sheet: ^3.0.0
@@ -32,7 +32,7 @@ dev_dependencies:
   freezed: ^2.4.5
   json_serializable: ^6.7.1
   retrofit_generator: ^9.1.7
-  auto_route_generator: ^9.0.0
+  auto_route_generator: ">=9.0.0 <11.0.0"
 
 flutter:
   uses-material-design: true
