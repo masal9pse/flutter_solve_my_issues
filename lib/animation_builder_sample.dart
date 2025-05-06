@@ -72,6 +72,7 @@ class _SamplePageState extends State<SamplePage>
       floatingActionButton: ElevatedButton(
         onPressed: () {
           // MaterialPageRoute
+          controller.value = 0.8;
           controller.forward();
           // controller.animateBack(0.5);
         },

@@ -1,88 +1,91 @@
-// todo
-// 単一のwidgetにアニメーションを当てる
-// TransitionAnimationを使って実装する
-
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(App());
-}
+void main() => runApp(const MyApp());
 
-class App extends StatelessWidget {
-  const App({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: MyWidget());
+    return const MaterialApp(
+      home: SizeTransitionExample(),
+    );
   }
 }
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class SizeTransitionExample extends StatefulWidget {
+  const SizeTransitionExample({super.key});
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<SizeTransitionExample> createState() => _SizeTransitionExampleState();
 }
 
-class _MyWidgetState extends State<MyWidget>
-    with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  late Tween<Alignment> alignTween;
-  late Animation<Alignment> alignAnimation;
+class _SizeTransitionExampleState extends State<SizeTransitionExample> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    controller = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 4000));
-    alignTween = Tween(begin: Alignment.topCenter, end: Alignment.bottomCenter);
-    alignAnimation = controller.drive(alignTween);
-    // CurvedAnimation(parent: controller, curve: Interval(0, 0.5))
-    //     .drive(alignTween);
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+      value: 0.5, // 初期値を0.5に設定
+    );
+
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+  }
+
+  void _expand() {
+    _controller.animateTo(1.0); // 完全に表示
+  }
+
+  void _collapse() {
+    _controller.animateTo(0.0); // 完全に非表示
+  }
+
+  void _half() {
+    _controller.animateTo(0.5); // 半分のサイズに戻す
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: ElevatedButton(
-            onPressed: () {
-              // controller.animateBack(0.4);
-              controller.animateBack(0);
-            },
-            child: Text('half pos')),
-      ),
+      appBar: AppBar(title: const Text('SizeTransition 初期値0.5')),
       body: Center(
-        // 内部でAnimatedBuilder
-        child: AlignTransition(
-          alignment: alignAnimation,
-          child: Text('abced'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizeTransition(
+              sizeFactor: _animation,
+              axis: Axis.vertical,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                color: Colors.blueAccent,
+                child: const Text(
+                  'Hello SizeTransition!',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Wrap(
+              spacing: 10,
+              children: [
+                ElevatedButton(onPressed: _expand, child: const Text('Expand')),
+                ElevatedButton(onPressed: _half, child: const Text('Half')),
+                ElevatedButton(onPressed: _collapse, child: const Text('Collapse')),
+              ],
+            ),
+          ],
         ),
-        // child: AnimatedBuilder(
-        //   animation: controller,
-        //   builder: (context, _) {
-        //     return Opacity(
-        //       opacity: opacityAnimation.value,
-        //       child: Align(
-        //         alignment: alignAnimation.value,
-        //         child: Transform.rotate(
-        //           angle: rotateAnimation.value,
-        //           child: Text('changed text'),
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          controller.forward();
-          // controller.animateBack(0.4);
-        },
-        child: Text('aaa'),
       ),
     );
   }
